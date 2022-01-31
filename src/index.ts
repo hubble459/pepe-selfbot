@@ -2,13 +2,18 @@ import DiscordClient from './discord_client';
 import glob from 'glob';
 import path from 'path';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import YAML from 'yaml';
 import { Command } from './type/command';
 import { Snowflake } from 'discord-api-types';
 import { sleep } from './util';
 dotenv.config();
 
+const file = fs.readFileSync('./config.yml', 'utf8')
+const config = YAML.parse(file);
+
 const PEPE_BOT = '270904126974590976';
-const DISCORD_ID = process.env.DISCORD_ID;
+const DISCORD_ID = config.IDS.SelfBotUserID;
 const TOKEN = process.env.TOKEN;
 const TS_MODE = process.env.TS_NODE_DEV === 'true';
 let channelId: undefined | Snowflake;
@@ -19,7 +24,7 @@ if (!TOKEN) {
 }
 
 if (!DISCORD_ID) {
-    console.error('Missing DISCORD_ID in environment variables');
+    console.error('Missing SelfBotUserID in environment variables');
     process.exit(-1);
 }
 
@@ -33,16 +38,17 @@ const commands: Command[] = glob
     .map(require)
     .map((cmd) => (!!cmd.default ? cmd.default : cmd))
     .filter((cmd: Command) => cmd.cooldown !== undefined && !!cmd.command && Array.isArray(cmd.actions));
-// .filter((cmd: Command) => cmd.command !== 'pls work');
 
 const expecting: Command[] = [];
 
 client.on('MESSAGE_CREATE', async (message) => {
     if (message.author.id === DISCORD_ID) {
         if (message.content === 'nghh~') {
+            // Start command
             channelId = message.channel_id;
             executeCommand();
         } else if (message.content === 'ah~') {
+            // Stop command
             channelId = undefined;
         }
     }
@@ -86,6 +92,7 @@ function randCooldown(min: number, max: number) {
 
 async function executeCommand() {
     if (!channelId) {
+        // Sto(m)p
         return;
     }
 

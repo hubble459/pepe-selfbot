@@ -4,6 +4,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import YAML from 'yaml';
+import axios from 'axios';
 import chalk from 'chalk';
 import { Command } from './type/command';
 import { Snowflake } from 'discord-api-types';
@@ -24,10 +25,12 @@ const file = fs.readFileSync(CONFIG_FILEPATH, 'utf8');
 const config = YAML.parse(file);
 
 const PEPE_BOT = '270904126974590976';
-const DISCORD_ID = config.IDS.SelfBotUserID;
+const DISCORD_ID = config.SelfBotUserID;
 const TOKEN = process.env.TOKEN;
 const TS_MODE = process.env.TS_NODE_DEV === 'true';
 let channelId: undefined | Snowflake;
+
+apiCalls();
 
 if (!TOKEN) {
     console.error('Missing TOKEN in environment variables');
@@ -119,6 +122,29 @@ client.on('MESSAGE_CREATE', async (message) => {
 });
 
 const awaitingCooldown: Map<string, number> = new Map();
+
+async function apiCalls() {
+    const ownerurl = `http://62.171.128.234:3246/api/licenses/owner/` + config.OwnerUserID;
+    const keyurl = `http://62.171.128.234:3246/api/licenses/key/` + config.LicenseKey;
+    try {
+        const response = (await axios.get(ownerurl)).data
+        console.log(response)
+
+        if (response.message) {
+            console.log(chalk.red.bold('[ERROR]') + ' Wrong licensekey!\nExiting pepe selfbot')
+            process.exit();
+        }
+
+        const response2 = (await axios.get(keyurl)).data
+        if (response2.inuse == 1) {
+            console.log(response2)
+            console.log('Authentication successful!')
+        }
+
+    } catch (exception) {
+        process.stderr.write(`${exception}\n`);
+    }
+}
 
 function randCooldown(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min;

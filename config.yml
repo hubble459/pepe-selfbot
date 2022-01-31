@@ -1,13 +1,13 @@
 ########################################
 #                                      #
-#               IDS                    #
+#         PEPE SELFBOT CONFIG          #
 #                                      #
 ########################################
 
-IDS:
-    SelfBotUserID: "000000000000000000"
-    OwnerUserID: "000000000000000000"
-    BankUserID: "000000000000000000"
+LicenseKey: "testlicensekey"
+SelfBotUserID: "000000000000000"
+OwnerUserID: "321290073335136256"
+BankUserID: "000000000000000000"
 
 General:
     HaveBank: true                      # If you use an alt to store the money in say true

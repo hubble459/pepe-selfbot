@@ -4,17 +4,17 @@ export async function sleep(ms: number) {
 
 export const devconfig = `########################################
 #                                      #
-#               IDS                    #
+#         PEPE SELFBOT CONFIG          #
 #                                      #
 ########################################
 
-IDS:
-    SelfBotUserID: "000000000000000000"
-    OwnerUserID: "000000000000000000"
-    BankUserID: "000000000000000000"
+LicenseKey: "LICENSEKEY"
+SelfBotUserID: "000000000000000000"
+OwnerUserID: "000000000000000000"
+BankUserID: "000000000000000000"
 
 General:
-    HaveBank: true                      # If you use an alt to store the money in say true
+    HasBank: true                      # If you use an alt to store the money in say true
     ButtonInterval: 500                 # Time in milliseconds before clicking a button (min. = 500ms)
     SaveMode: true                      # If you don't want to run commands that *might* kill you (like search)
 

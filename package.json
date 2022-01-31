@@ -1,0 +1,36 @@
+{
+  "name": "discord_client",
+  "version": "1.0.0",
+  "description": "Illegal Discord Client",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev src/index.ts",
+    "build": "tsc"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Hubble334",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/node-fetch": "^2.5.12",
+    "@types/ws": "^8.2.2",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "bufferutil": "^4.0.6",
+    "deepmerge": "^4.2.2",
+    "discord-api-types": "^0.26.1",
+    "dotenv": "^14.3.2",
+    "erlpack": "^0.1.4",
+    "glob": "^7.2.0",
+    "node-fetch": "2.6.5",
+    "ws": "^8.4.2"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 4,
+    "printWidth": 120
+  }
+}

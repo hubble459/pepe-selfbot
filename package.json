@@ -5,7 +5,10 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
-    "build": "rimraf dist/* && tsc"
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,15 +18,22 @@
     "@types/glob": "^7.2.0",
     "@types/node-fetch": "^2.5.12",
     "@types/ws": "^8.2.2",
+    "@webpack-cli/generators": "^2.4.2",
+    "javascript-obfuscator": "^3.1.0",
+    "prettier": "^2.5.1",
+    "ts-loader": "^9.2.6",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "webpack": "^5.67.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-node-externals": "^3.0.0",
+    "webpack-obfuscator": "^3.5.0"
   },
   "dependencies": {
     "bufferutil": "^4.0.6",
     "deepmerge": "^4.2.2",
     "discord-api-types": "^0.26.1",
     "dotenv": "^14.3.2",
-    "erlpack": "^0.1.4",
     "glob": "^7.2.0",
     "node-fetch": "2.6.5",
     "ws": "^8.4.2"

@@ -108,5 +108,6 @@ async function executeCommand() {
     for (let i = 0; i < count; i++) {
         expecting.push(randomCommand);
     }
-    setTimeout(executeCommand, randCooldown(1000, 5000));
+    await sleep(randCooldown(1000, 5000));
+    executeCommand();
 }

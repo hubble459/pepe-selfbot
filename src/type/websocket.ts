@@ -46,7 +46,6 @@ export type PresenceUpdate = {
     activities: Activity[];
 }
 
-
 export type SessionReplace = {
     status: Status;
     session_id: string;
@@ -63,5 +62,6 @@ export interface WSEvents {
     PRESENCE_UPDATE: [PresenceUpdate];
     SESSION_REPLACE: [SessionReplace];
     MESSAGE_CREATE: [APIMessage];
+    // MESSAGE_EDIT: [APIMessage, APIMessage];
     '*': [{type: keyof WSEvents, data: any}];
 }

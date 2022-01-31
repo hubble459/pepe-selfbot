@@ -12,9 +12,6 @@ const command: Command = {
         async execute(client, message) {
             const button = message.components![0]!.components[0] as APIButtonComponentWithCustomId;
             await client.clickButton(message, button);
-        },
-        update() {
-            
         }
     }],
 };

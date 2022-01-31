@@ -5,9 +5,9 @@
 ########################################
 
 IDS:
-    SelfBotUserID: "937399785613303890"
-    OwnerUserID: "321290073335136256"
-    BankUserID: "00000000000000"
+    SelfBotUserID: "000000000000000000"
+    OwnerUserID: "000000000000000000"
+    BankUserID: "000000000000000000"
 
 General:
     HaveBank: true                      # If you use an alt to store the money in say true

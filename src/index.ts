@@ -41,6 +41,26 @@ const commands: Command[] = glob
 
 const expecting: Command[] = [];
 
+client.on('MESSAGE_UPDATE', async (message) => {
+    if (message.channel_id === channelId) {
+        if (message.author.id === PEPE_BOT) {
+            if (!message.referenced_message || message.referenced_message?.author.id === DISCORD_ID) {
+                for (const command of commands) {
+                    for (const action of command.actions) {
+                        if (action.matcher(message)) {
+                            try {
+                                await action.execute(client, message);
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }    
+});
+
 client.on('MESSAGE_CREATE', async (message) => {
     if (message.author.id === DISCORD_ID) {
         if (message.content === 'nghh~') {

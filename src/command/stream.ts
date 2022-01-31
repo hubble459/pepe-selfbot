@@ -1,4 +1,4 @@
-import { APIButtonComponent, APIButtonComponentWithCustomId } from 'discord-api-types';
+import { APIButtonComponentWithCustomId } from 'discord-api-types';
 import { Command } from '../type/command';
 
 const command: Command = {
@@ -13,8 +13,8 @@ const command: Command = {
             const button = message.components![0]!.components[0] as APIButtonComponentWithCustomId;
             await client.clickButton(message, button);
         },
-        update() {
-            
+        async update(client, message) {
+            console.log(message);
         }
     }],
 };

@@ -10,14 +10,17 @@ import { Snowflake } from 'discord-api-types';
 import { sleep, devconfig } from './util';
 dotenv.config();
 
-// 
-if (!fs.existsSync(path.join(__dirname, '../config.yml'))) {
+const CONFIG_FILEPATH = path.join(__dirname, '../config.yml');
+
+if (!fs.existsSync(CONFIG_FILEPATH)) {
     const error = chalk.bold.red.underline;
-    console.log(`${error('[!] Could not find the configuration file!')}\n${chalk.yellow('regenerating config.yml...')}`);
-    fs.writeFileSync(path.join(__dirname, '../config.yml'), devconfig);
+    console.log(
+        `${error('[!] Could not find the configuration file!')}\n${chalk.yellow('regenerating config.yml...')}`
+    );
+    fs.writeFileSync(CONFIG_FILEPATH, devconfig);
 }
 
-const file = fs.readFileSync(path.join(__dirname, '../config.yml'), 'utf8')
+const file = fs.readFileSync(CONFIG_FILEPATH, 'utf8');
 const config = YAML.parse(file);
 
 const PEPE_BOT = '270904126974590976';
@@ -48,16 +51,17 @@ const commands: Command[] = glob
     .filter((cmd: Command) => cmd.cooldown !== undefined && !!cmd.command && Array.isArray(cmd.actions));
 
 const expecting: Command[] = [];
+const expectUpdate: Command[] = [];
 
 client.on('MESSAGE_UPDATE', async (message) => {
     if (message.channel_id === channelId) {
         if (message.author.id === PEPE_BOT) {
             if (!message.referenced_message || message.referenced_message?.author.id === DISCORD_ID) {
-                for (const command of commands) {
+                for (const command of expectUpdate) {
                     for (const action of command.actions) {
-                        if (action.matcher(message)) {
+                        if (!!action.update && action.matcher(message)) {
                             try {
-                                await action.execute(client, message);
+                                await action.update(client, message);
                             } catch (e) {
                                 console.error(e);
                             }
@@ -66,7 +70,7 @@ client.on('MESSAGE_UPDATE', async (message) => {
                 }
             }
         }
-    }    
+    }
 });
 
 client.on('MESSAGE_CREATE', async (message) => {
@@ -96,10 +100,11 @@ client.on('MESSAGE_CREATE', async (message) => {
                 }
             }
             for (const command of expecting) {
+                let count: number = 0;
+
                 for (const action of command.actions) {
                     if (action.matcher(message)) {
-                        expecting.shift();
-
+                        count++;
                         try {
                             await action.execute(client, message);
                         } catch (e) {
@@ -107,6 +112,7 @@ client.on('MESSAGE_CREATE', async (message) => {
                         }
                     }
                 }
+                expecting.splice(0, count);
             }
         }
     }
@@ -139,6 +145,12 @@ async function executeCommand() {
     } catch (e) {
         console.error(e);
     }
+
+    const countUpdate = randomCommand.actions.reduce((i, c) => i + +!!c.update, 0);
+    for (let i = 0; i < countUpdate; i++) {
+        expectUpdate.push(randomCommand);
+    }
+
     const count = randomCommand.actions.reduce((i, c) => i + +!c.should_reference, 0);
     for (let i = 0; i < count; i++) {
         expecting.push(randomCommand);

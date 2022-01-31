@@ -1,4 +1,5 @@
 import { APIButtonComponentWithCustomId } from 'discord-api-types';
+import { minigames } from '../command_actions/minigames';
 import { Command } from '../type/command';
 import { sleep } from '../util';
 
@@ -21,17 +22,7 @@ const command: Command = {
                 await client.clickButton(message, end as any);
             },
         },
-        {
-            should_reference: true,
-            matcher(msg) {
-                return !!msg.embeds[0]?.footer?.text.startsWith(`Soccer`);
-            },
-            async execute(client, message) {
-                const personLine = message.content.split('\n')[2];
-                const index = personLine.indexOf(`:levitate:`);
-                await client.clickButton(message, message.components![0].components[index === 0 ? 1 : 0] as any);
-            },
-        },
+        ...minigames
     ],
 };
 

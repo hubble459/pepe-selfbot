@@ -1,20 +1,47 @@
-import { APIButtonComponentWithCustomId } from 'discord-api-types';
+import { APIButtonComponentWithCustomId, APISelectMenuComponent } from 'discord-api-types';
 import { Command } from '../type/command';
+import { sleep } from '../util';
+
+let static_busy = false;
 
 const command: Command = {
     command: 'pls stream',
-    cooldown: 45_000,
+    cooldown: 60_000 * 15,
     actions: [{
         should_reference: false,
         matcher(msg) {
             return !!msg.embeds[0]?.author?.name.includes('Stream Manager');
         },
         async execute(client, message) {
-            const button = message.components![0]!.components[0] as APIButtonComponentWithCustomId;
-            await client.clickButton(message, button);
+            if (!!message.embeds[0]!.fields?.find(f => f.name === 'Live Since')) {
+                const readChat = message.components![0].components[1] as APIButtonComponentWithCustomId;
+                await client.clickButton(message, readChat);  
+                await sleep(500);
+                const endInteraction = message.components![1].components[1] as APIButtonComponentWithCustomId;
+                await client.clickButton(message, endInteraction);                
+            } else {
+                const button = message.components![0]!.components[0] as APIButtonComponentWithCustomId;
+                await client.clickButton(message, button);
+            }
         },
         async update(client, message) {
-            console.log(message);
+            if (static_busy) {
+                return;
+            }
+            const selectGame = !!message.embeds[0].description?.includes('What game do you want to stream');
+            if (selectGame) {
+                static_busy = true;
+                const selectMenu = message.components![0].components[0] as APISelectMenuComponent;
+                const randOption = selectMenu.options[Math.floor(Math.random() * selectMenu.options.length)];
+                await client.selectMenuOption(message, selectMenu, randOption);
+                await sleep(500);
+                const startStream = message.components![1].components[0] as APIButtonComponentWithCustomId;
+                await client.clickButton(message, startStream);
+                static_busy = false;
+            } else {
+                const readChat = message.components![0].components[1] as APIButtonComponentWithCustomId;
+                await client.clickButton(message, readChat);                
+            }
         }
     }],
 };

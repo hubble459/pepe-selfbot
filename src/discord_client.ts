@@ -4,7 +4,7 @@ import { rest, Rest } from './util/rest_api';
 import { OP_CODE, WSEvents, WSMessage } from './type/websocket';
 import os from 'os';
 import Ready from './type/ready';
-import { APIButtonComponentWithCustomId, APIGuild, APIMessage, Snowflake } from 'discord-api-types';
+import { APIButtonComponentWithCustomId, APIGuild, APIMessage, APIMessageSelectMenuInteractionData, APISelectMenuComponent, APISelectMenuOption, Snowflake } from 'discord-api-types';
 
 export default class DiscordClient extends EventEmitter {
     private readonly token: string;
@@ -97,23 +97,47 @@ export default class DiscordClient extends EventEmitter {
     }
 
     public async clickButton(message: APIMessage, button: APIButtonComponentWithCustomId) {
-        const payload = {
-            type: 3,
-            guild_id: message.guild_id,
-            channel_id: message.channel_id,
-            message_id: message.id,
-            message_flags: 0,
-            application_id: message.author.id,
-            session_id: this.session_id,
-            data: {
-                component_type: button.type,
-                custom_id: button.custom_id,
-            },
-        };
-        try {           
-            await this.apiV9.interactions._post(payload);
+        if (button.disabled) {
+            return;
+        }
+        try {
+            await this.apiV9.interactions._post({
+                type: 3,
+                guild_id: message.guild_id,
+                channel_id: message.channel_id,
+                message_id: message.id,
+                message_flags: 0,
+                application_id: message.author.id,
+                session_id: this.session_id,
+                data: {
+                    component_type: button.type,
+                    custom_id: button.custom_id,
+                },
+            });
         } catch (e) {
-            console.error(e.errors, message.id);
+            console.error(e, e.errors, message.id);
+        }
+    }
+
+    public async selectMenuOption(message: APIMessage, selectMenu: APISelectMenuComponent, option: APISelectMenuOption) {
+        try {
+            await this.apiV9.interactions._post({
+                type: 3,
+                guild_id: message.guild_id,
+                channel_id: message.channel_id,
+                message_id: message.id,
+                message_flags: 0,
+                application_id: message.author.id,
+                session_id: this.session_id,
+                data: {
+                    component_type: selectMenu.type,
+                    custom_id: selectMenu.custom_id,
+                    type: selectMenu.type,
+                    values: [option.value],
+                },
+            });
+        } catch (e) {
+            console.error(e, e.errors, message.id);
         }
     }
 }

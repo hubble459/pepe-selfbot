@@ -2,6 +2,9 @@ import { APIButtonComponentWithCustomId } from 'discord-api-types';
 import { Action } from '../type/command';
 import { sleep } from '../util';
 
+let emoji: string | undefined;
+let lines: string[] | undefined;
+
 export const minigames: Action[] = [
     {
         should_reference: true,
@@ -19,16 +22,20 @@ export const minigames: Action[] = [
         matcher(msg) {
             return msg.content.includes('Color Match');
         },
-        async execute(client, message) {
-            const lines = message.content.split('\n');
+        async execute(_client, message) {
+            lines = message.content.split('\n');
             lines.unshift();
             console.log(lines);
-
-            await sleep(3000);
-            const button = (<APIButtonComponentWithCustomId[]>message.components![0].components).find((c) =>
-                c.label?.startsWith('')
-            )!;
-            await client.clickButton(message, button);
+        },
+        async update(client, message) {
+            if (!!lines) {
+                const word = ''; // ?
+                const button = (<APIButtonComponentWithCustomId[]>message.components![0].components).find((c) =>
+                    c.label?.startsWith('')
+                )!;
+                lines = undefined;
+                await client.clickButton(message, button);
+            }
         },
     },
     {
@@ -36,16 +43,18 @@ export const minigames: Action[] = [
         matcher(msg) {
             return msg.content.includes('Emoji Match');
         },
-        async execute(client, message) {
-            const emoji = message.content.split('\n')[1];
-            console.log(emoji);
-
-            await sleep(2000);
-            const button = (<APIButtonComponentWithCustomId[]>[
-                ...message.components![0].components,
-                ...message.components![1].components,
-            ]).find((c) => c.label === emoji)!;
-            await client.clickButton(message, button);
+        async execute(_client, message) {
+            emoji = message.content.split('\n')[1];
+        },
+        async update(client, message) {
+            if (!!emoji) {
+                const button = (<APIButtonComponentWithCustomId[]>[
+                    ...message.components![0].components,
+                    ...message.components![1].components,
+                ]).find((c) => c.label === emoji)!;
+                emoji = undefined;
+                await client.clickButton(message, button);
+            }
         },
     },
 ];

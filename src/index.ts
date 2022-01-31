@@ -4,12 +4,20 @@ import path from 'path';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import YAML from 'yaml';
+import chalk from 'chalk';
 import { Command } from './type/command';
 import { Snowflake } from 'discord-api-types';
-import { sleep } from './util';
+import { sleep, devconfig } from './util';
 dotenv.config();
 
-const file = fs.readFileSync('./config.yml', 'utf8')
+// 
+if (!fs.existsSync(path.join(__dirname, '../config.yml'))) {
+    const error = chalk.bold.red.underline;
+    console.log(`${error('[!] Could not find the configuration file!')}\n${chalk.yellow('regenerating config.yml...')}`);
+    fs.writeFileSync(path.join(__dirname, '../config.yml'), devconfig);
+}
+
+const file = fs.readFileSync(path.join(__dirname, '../config.yml'), 'utf8')
 const config = YAML.parse(file);
 
 const PEPE_BOT = '270904126974590976';
@@ -30,7 +38,7 @@ if (!DISCORD_ID) {
 
 const client = new DiscordClient(TOKEN);
 client.on('READY', () => {
-    console.log('ready');
+    console.log(chalk.green('ready'));
 });
 
 const commands: Command[] = glob

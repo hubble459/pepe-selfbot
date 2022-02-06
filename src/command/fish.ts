@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls fish',
-    cooldown: 40000,
+    active: config().Commands.Fish.Enabled,
+    cooldown: config().Commands.Fish.Timeout,
     actions: [
         {
             should_reference: true,

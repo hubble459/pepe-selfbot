@@ -1,11 +1,12 @@
 import { APIButtonComponentWithCustomId } from 'discord-api-types';
 import { minigames } from '../command_actions/minigames';
 import { Command } from '../type/command';
-import { sleep } from '../util';
+import { sleep, config } from '../util';
 
 const command: Command = {
     command: 'pls pet',
-    cooldown: 60000 * 15,
+    active: config().Commands.Pet.Enabled,
+    cooldown: config().Commands.Pet.Timeout,
     actions: [
         {
             should_reference: false,

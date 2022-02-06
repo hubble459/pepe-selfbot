@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls monthly',
-    cooldown: 8.64e7 * 20 + 10,
+    active: config().Commands.Monthly.Enabled,
+    cooldown: config().Commands.Monthly.Timeout,
     actions: [],
 };
 

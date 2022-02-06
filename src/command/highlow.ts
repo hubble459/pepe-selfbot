@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls hl',
-    cooldown: 30000,
+    active: config().Commands.HighLow.Enabled,
+    cooldown: config().Commands.HighLow.Timeout,
     actions: [
         {
             should_reference: true,

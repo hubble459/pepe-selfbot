@@ -5,9 +5,10 @@
 ########################################
 
 LicenseKey: "testlicensekey"
+Prefix: "$"
 SelfBotUserID: "937399785613303890"
 OwnerUserID: "321290073335136256"
-BankUserID: "000000000000000000"
+BankUserID: "936325069049823232"
 
 General:
     HaveBank: true                      # If you use an alt to store the money in say true
@@ -15,47 +16,52 @@ General:
     SaveMode: true                      # If you don't want to run commands that *might* kill you (like search)
 
 Commands: # Timeout is in seconds
+    StartCommand: "start"
+    StopCommand: "stop"
     Beg:
       Enabled: true
-      Timeout: 10
+      Timeout: 45_000
     Dig:
       Enabled: true
-      Timeout: 10
+      Timeout: 40000
     Fish:
       Enabled: true
-      Timeout: 10
+      Timeout: 40000
     Hunt:
       Enabled: true
-      Timeout: 10
+      Timeout: 40000
     Pet:
       Enabled: true
-      Timeout: 10
+      Timeout: 900000
     PostMemes:
       Enabled: true
-      Timeout: 10
+      Timeout: 45_000
     Stream:
       Enabled: true
-      Timeout: 10
+      Timeout: 900000
     Work:
       Enabled: true
-      Timeout: 10
+      Timeout: 36000000
+    Give:
+      Enabled: true
+      Timeout: 45_000
+    Dep:
+      Enabled: true
+      Timeout: 120_000
 # Claimable Money
     Daily:
       Enabled: true
-      Timeout: 10
+      Timeout: 86400010
     Weekly: # For dank memer patreons
       Enabled: false
-      Timeout: 10
+      Timeout: 604800010
     Monthly: 
       Enabled: true
-      Timeout: 10
-    Dep:
-      Enabled: true
-      Timeout: 10
+      Timeout: 1728000010
 # Gambling Commands
     HighLow:
       Enabled: true
-      Timeout: 10
+      Timeout: 30000
     BlackJack:
       Enabled: true
       Timeout: 10

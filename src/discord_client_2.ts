@@ -2,9 +2,49 @@ import WebSocket from 'ws';
 import EventEmitter from 'events';
 import { rest, Rest } from './util/rest_api';
 import { OP_CODE, WSEvents, WSMessage } from './type/websocket';
-import os from 'os';
-import Ready from './type/ready';
 import { APIButtonComponentWithCustomId, APIGuild, APIMessage, APIMessageSelectMenuInteractionData, APISelectMenuComponent, APISelectMenuOption, Snowflake } from 'discord-api-types';
+
+import { Client, WebSocketManager, WebSocketShard, Constants} from 'discord.js';
+
+// @ts-ignore
+WebSocketManager.prototype.connect = async function () {
+    const invalidToken = new Error(Constants.WSCodes[4004]);
+    const {
+      url: gatewayURL,
+      shards: recommendedShards,
+      session_start_limit: sessionStartLimit,
+    } = await this.client.api.gateway.get().catch((error: any) => {
+      throw error.httpStatus === 401 ? invalidToken : error;
+    });
+
+    const { total, remaining } = sessionStartLimit;
+
+    this.debug(`Fetched Gateway Information
+    URL: ${gatewayURL}
+    Recommended Shards: ${recommendedShards}`);
+
+    this.debug(`Session Limit Information
+    Total: ${total}
+    Remaining: ${remaining}`);
+
+    this.gateway = `${gatewayURL}/`;
+
+    let { shards } = this.client.options;
+
+    if (shards === 'auto') {
+      this.debug(`Using the recommended shard count provided by Discord: ${recommendedShards}`);
+      this.totalShards = this.client.options.shardCount = recommendedShards;
+      shards = this.client.options.shards = Array.from({ length: recommendedShards }, (_, i) => i);
+    }
+
+    this.totalShards = shards.length;
+    this.debug(`Spawning shards: ${shards.join(', ')}`);
+
+    // @ts-ignore
+    this.shardQueue = new Set(shards.map(id => new WebSocketShard(this, id)));
+
+    return this.createShards();
+}
 
 export default class DiscordClient extends EventEmitter {
     private readonly token: string;
@@ -48,51 +88,12 @@ export default class DiscordClient extends EventEmitter {
     constructor(token: string) {
         super();
         this.token = token;
-        this.connect();
-        
+        this.connect();  
     }
+
     connect() {
-        this.ws = new WebSocket('wss://gateway.discord.gg/?encoding=json&v=9');
-        this.ws.on('open', () => {
-            console.log('Connected!');
-        });
-        this.ws.on('close', () => {
-            this.connect();
-        });
-        this.ws.on('error', () => {
-            this.connect();
-        });
-        this.ws.on('message', (data: Buffer) => {
-            const message: WSMessage = JSON.parse(data.toString('utf-8'));
-
-            if (message.s) this.sequence = message.s;
-
-            if (message.t === 'READY') {
-                this.session_id = (message.d as Ready).session_id;
-                (message.d as Ready).guilds.forEach((g) => this.guilds.set(g.id, g));
-            }
-            this.emit(message.t, message.d);
-            this.emit('*', { type: message.t, data: message.d });
-
-            switch (message.op) {
-                case OP_CODE.HELLO:
-                    // heartbeat
-                    this.sendRaw(OP_CODE.IDENTIFY, {
-                        token: this.token,
-                        properties: {
-                            os: os.type(),
-                            browser: 'node.js',
-                            browser_version: '97.0.4692.99',
-                            device: os.type(),
-                        },
-                        compress: false,
-                    });
-                    setInterval(() => this.sendRaw(OP_CODE.HEARTBEAT, this.sequence), message.d.heartbeat_interval);
-                    break;
-                default:
-                    break;
-            }
-        });
+       const client = new Client({intents: ['GUILD_MESSAGES']});
+       client.login();
     }
 
     public sendRaw(op: OP_CODE, data: any) {

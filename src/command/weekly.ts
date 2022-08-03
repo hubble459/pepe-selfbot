@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls weekly',
-    cooldown: 8.64e7 * 7 + 10,
+    active: config().Commands.Weekly.Enabled,
+    cooldown: config().Commands.Weekly.Timeout,
     actions: [],
 };
 

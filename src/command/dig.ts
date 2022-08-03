@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls dig',
-    cooldown: 40000,
+    active: config().Commands.Dig.Enabled,
+    cooldown: config().Commands.Dig.Timeout,
     actions: [],
 };
 

@@ -1,8 +1,10 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 const command: Command = {
     command: 'pls beg',
-    cooldown: 45_000,
+    active: config().Commands.Beg.Enabled,
+    cooldown: config().Commands.Beg.Timeout,
     actions: [],
 };
 

@@ -10,6 +10,7 @@ export type Action = {
 
 export type Command = {
     cooldown: number;
+    active: boolean;
     command: string;
     actions: Action[];
 };

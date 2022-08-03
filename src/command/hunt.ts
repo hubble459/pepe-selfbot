@@ -1,10 +1,11 @@
 import { APIButtonComponentWithCustomId } from 'discord-api-types';
 import { Command } from '../type/command';
-import { sleep } from '../util';
+import { sleep, config } from '../util';
 
 const command: Command = {
     command: 'pls hunt',
-    cooldown: 40000,
+    active: config().Commands.Hunt.Enabled,
+    cooldown: config().Commands.Hunt.Timeout,
     actions: [
         {
             should_reference: true,

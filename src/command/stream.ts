@@ -1,12 +1,13 @@
 import { APIButtonComponentWithCustomId, APISelectMenuComponent } from 'discord-api-types';
 import { Command } from '../type/command';
-import { sleep } from '../util';
+import { sleep, config } from '../util';
 
 let static_busy = false;
 
 const command: Command = {
     command: 'pls stream',
-    cooldown: 60_000 * 15,
+    active: config().Commands.Stream.Enabled,
+    cooldown: config().Commands.Stream.Timeout,
     actions: [{
         should_reference: false,
         matcher(msg) {

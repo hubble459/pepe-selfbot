@@ -1,10 +1,12 @@
 import { Command } from '../type/command';
+import { config } from '../util';
 
 let canBuy = false;
 
 const command: Command = {
     command: 'pls pm',
-    cooldown: 45_000,
+    active: config().Commands.PostMemes.Enabled,
+    cooldown: config().Commands.PostMemes.Timeout,
     actions: [
         {
             should_reference: true,
